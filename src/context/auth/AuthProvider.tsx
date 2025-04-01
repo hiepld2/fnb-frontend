@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react'
 import { useKeycloak } from '@react-keycloak/web'
-import { useApi } from '#/utils/apiUtils'
+import axiosInstance, { setupAxiosInterceptors } from '#/utils/axios'
 
 type UserInfo = {
   id: string
@@ -34,27 +34,20 @@ export function AuthProvider({ children }: React.PropsWithChildren) {
   const [loggedIn, setLoggedIn] = useState(false)
   const [token, setToken] = useState<string | null>(null)
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null)
-  const { get } = useApi()
-  // const isFetchingRef = useRef(false)
 
   useEffect(() => {
-    console.log(
-      'AuthProvider Effect - Initialized:',
-      initialized,
-      'Authenticated:',
-      keycloak.authenticated
-    )
     if (!initialized) {
       return // Chờ Keycloak khởi tạo xong
     }
     setToken(keycloak.token || null)
     if (keycloak.authenticated && keycloak.token) {
+      setupAxiosInterceptors(keycloak)
       fetchUserInfo()
     } else if (!keycloak.authenticated) {
       setUserInfo(null)
-      localStorage.removeItem('userInfo') // Dọn dẹp localStorage
+      localStorage.removeItem('userInfo')
     }
-  }, [initialized, keycloak.authenticated, keycloak.token])
+  }, [initialized, keycloak])
 
   useEffect(() => {
     setLoggedIn(keycloak.authenticated || false)
@@ -63,7 +56,8 @@ export function AuthProvider({ children }: React.PropsWithChildren) {
   const fetchUserInfo = async () => {
     try {
       const userProfileUrl = `${keycloak.authServerUrl}/realms/${keycloak.realm}/protocol/openid-connect/userinfo`
-      const userData = await get(userProfileUrl)
+      const response = await axiosInstance.get(userProfileUrl)
+      const userData = response.data
       console.log('AuthProvider - User info fetched:', userData)
 
       const newUserInfo = {

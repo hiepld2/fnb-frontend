@@ -28,25 +28,26 @@ export default function Home() {
           </p>
         </div>
         <div className="mt-4 flex flex-col items-center justify-center gap-2 sm:flex-row sm:gap-3">
-          <Link to="/dashboard/overview" className="inline-flex items-center justify-center">
+          <Link to="/overview" className="inline-flex items-center justify-center">
             <Button variant="primary">User Dashboard</Button>
           </Link>
           <Link to="/admin" className="inline-flex items-center justify-center">
             <Button variant="destructive">Admin Dashboard</Button>
           </Link>
-          <Link
-            to="https://github.com/riipandi/vite-react-template"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <Button variant="secondary" className="inline-flex items-center justify-center">
-              Get Source Code
-            </Button>
-          </Link>
         </div>
         <div>
-          <Alert variant={keycloak.authenticated ? 'info' : 'warning'} className="w-full text-center">
-            {keycloak.authenticated ? `Welcome back ${userInfo?.fullName} 👋` : 'You are not logged in!'}
+          <Alert
+            variant={keycloak.authenticated ? 'info' : 'warning'}
+            className="w-full text-center"
+          >
+            {keycloak.authenticated
+              ? `Welcome back ${userInfo?.fullName} 👋`
+              : 'You are not logged in! '}
+            {!keycloak.authenticated && (
+              <Button variant="primary" onPress={() => keycloak.login()}>
+                Login
+              </Button>
+            )}
           </Alert>
         </div>
       </div>
@@ -54,10 +55,9 @@ export default function Home() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <p className="text-gray-600 text-sm tracking-wide dark:text-gray-400">
             &copy; {new Date().getFullYear()} - Made by{' '}
-            <Link to="https://ripandis.com" className="hover:underline">
-              Aris Ripandi
+            <Link to="https://github.com/hiepld2" className="hover:underline">
+              HiepLD2
             </Link>{' '}
-            in 🇮🇩
           </p>
           <p className="mt-2 text-gray-600 text-sm tracking-wide dark:text-gray-400">
             v{import.meta.env.APP_VERSION}

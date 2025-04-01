@@ -2,8 +2,10 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { RouterProvider } from 'react-router-dom'
 import { ReactKeycloakProvider } from '@react-keycloak/web'
+import { QueryClientProvider } from '@tanstack/react-query'
 import Keycloak from 'keycloak-js'
 import { AuthProvider } from './context/auth/AuthProvider'
+import { queryClient } from './utils/queryClient'
 
 import { router } from './routes'
 
@@ -72,9 +74,12 @@ ReactDOM.createRoot(rootElement).render(
     onEvent={handleKeycloakEvent}
   >
     <React.StrictMode>
-      <AuthProvider>
-        <RouterProvider router={router} />
-      </AuthProvider>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <RouterProvider router={router} />
+        </AuthProvider>
+        {/* Chỉ hiển thị DevTools trong môi trường development */}
+      </QueryClientProvider>
     </React.StrictMode>
   </ReactKeycloakProvider>
 )

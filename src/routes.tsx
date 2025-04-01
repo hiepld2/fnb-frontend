@@ -7,7 +7,7 @@ import Home from './pages/home'
 import { UserDashboard } from './pages/users'
 import Recovery from './pages/auth/recovery'
 import ResetPassword from './pages/auth/reset-password'
-import { UserProfile } from './pages/auth/UserProfile'
+import { UserProfile } from './pages/auth/user-profile'
 
 // Ideally this would be an API call to server to get logged in user data
 const getUserData = () => {
@@ -31,10 +31,11 @@ export const router = createBrowserRouter(
         <Route path="/login" element={<Login />} />
       </Route>
 
-      <Route path="/dashboard" element={<AppLayout />}>
-        <Route path="overview" element={<UserDashboard />} />
-        <Route path="user-profile" element={<UserProfile />} />
+      <Route path="/" element={<AppLayout />}>
+        <Route path="/overview" element={<UserDashboard />} />
+        <Route path="/user-profile" element={<UserProfile />} />
       </Route>
+
       <Route path="/recovery" element={<Recovery />} />
       <Route path="/reset-password" element={<ResetPassword />} />
     </Route>
