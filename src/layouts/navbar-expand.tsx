@@ -1,4 +1,8 @@
+import { useAuthentication } from '../context/auth/AuthProvider'
+
 export function NavBarExpand() {
+  const { userInfo, logout } = useAuthentication()
+
   return (
     <div className="flex h-full min-h-screen w-56 flex-col items-center overflow-hidden rounded-r bg-white text-gray-600 shadow-sm dark:border-gray-800 dark:border-r dark:bg-gray-900 dark:text-gray-400">
       <a className="mt-3 flex w-full items-center px-3" href="/">
@@ -160,11 +164,11 @@ export function NavBarExpand() {
         </div>
       </div>
 
-      <div className="mt-auto mb-2 w-full px-2">
+      <div className="mt-auto w-full px-2">
         <div className="mt-3 flex w-full flex-col items-center border-gray-200 border-t dark:border-gray-700">
           <a
             className="mt-2 flex h-12 w-full items-center rounded px-3 hover:bg-gray-200 dark:hover:bg-gray-700 dark:hover:text-gray-300"
-            href="/"
+            href="/dashboard/user-profile"
           >
             <svg
               className="h-6 w-6 stroke-current"
@@ -180,9 +184,35 @@ export function NavBarExpand() {
                 d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             </svg>
-            <span className="ml-2 font-medium text-sm">My Account</span>
+            <span className="ml-2 font-medium text-sm overflow-hidden text-ellipsis whitespace-nowrap">
+              {userInfo ? userInfo.fullName : 'Tài khoản'}
+            </span>
           </a>
         </div>
+      </div>
+
+      <div className="w-full px-2 mb-2">
+        <button
+          onClick={logout}
+          className="mt-2 flex h-12 w-full items-center rounded px-3 text-left hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-900 dark:hover:text-red-400"
+          type="button"
+        >
+          <svg
+            className="h-6 w-6 stroke-current"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+            />
+          </svg>
+          <span className="ml-2 font-medium text-sm">Đăng xuất</span>
+        </button>
       </div>
     </div>
   )

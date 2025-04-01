@@ -1,5 +1,5 @@
 {
-    "name": "vite-react-template",
+    "name": "fnb-frontend",
     "private": true,
     "version": "0.3.0",
     "type": "module",
@@ -24,7 +24,9 @@
         "typecheck": "tsc -b"
     },
     "dependencies": {
+        "@react-keycloak/web": "^3.4.0",
         "gotrue-js": "^0.9.29",
+        "keycloak-js": "^26.1.4",
         "lucide-react": "^0.453.0",
         "react": "^18.3.1",
         "react-aria": "^3.35.1",

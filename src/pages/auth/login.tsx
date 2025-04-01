@@ -1,88 +1,77 @@
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { Link } from 'react-router-dom'
-import { GitHubButton, GoogleButton } from '#/components/social-button'
-import { Alert, Button, Card, HorizontalDivider, TextField } from '#/components/ui-react-aria'
-import { auth, useAuthentication } from '#/context/auth/AuthProvider'
-
-interface LoginTypes {
-  email: string
-  password: string
-}
+import { useState, useEffect } from 'react'
+import { Alert, Button, Card } from '#/components/ui-react-aria'
+import { useKeycloak } from '@react-keycloak/web'
+import { useAuthentication } from '#/context/auth/AuthProvider'
 
 export default function Login() {
-  const { login, loggedOut } = useAuthentication()
+  const { keycloak } = useKeycloak()
+  const { logout } = useAuthentication()
   const [failed, setFailed] = useState<string | null>()
+  const [isLoading, setIsLoading] = useState(false)
 
-  const {
-    // register,
-    handleSubmit,
-    // formState: { errors, isSubmitting },
-  } = useForm<LoginTypes>()
+  // Clear localStorage và context khi trang login được mở
+  useEffect(() => {
+    // Nếu người dùng đang đăng nhập, thực hiện logout để clear context
+    if (keycloak.authenticated) {
+      console.log('Đang ở trang login, thực hiện clear context và localStorage')
+      logout()
+    } else {
+      // Nếu không, chỉ xóa localStorage để đảm bảo không còn dữ liệu đăng nhập cũ
+      localStorage.removeItem('userInfo')
+      localStorage.removeItem('keycloak_token')
+      console.log('Đã xóa dữ liệu đăng nhập cũ trong localStorage')
+    }
+  }, [keycloak.authenticated, logout])
 
-  const handleLogin = (data: LoginTypes) => {
-    setFailed(null)
-    const { email, password } = data
-    auth
-      .login(email, password, true)
-      .then((_response) => login())
-      .catch((error) => setFailed(error.message))
+  const handleLogin = async () => {
+    try {
+      setFailed(null)
+      setIsLoading(true)
+
+      // Lưu đường dẫn chuyển hướng sau khi đăng nhập
+      const redirectPath = sessionStorage.getItem('redirectAfterLogin') || '/dashboard/overview'
+
+      // Sử dụng luồng chuẩn của Keycloak (Authorization Code Flow + PKCE)
+      await keycloak.login({
+        redirectUri: `${window.location.origin}${redirectPath}`,
+      })
+
+      // Lưu ý: Sau khi gọi keycloak.login(), trang sẽ được chuyển hướng đến Keycloak
+      // và sẽ không thực thi mã bên dưới cho đến khi quay lại sau khi xác thực
+      console.log('Quay lại sau khi xác thực Keycloak')
+
+    } catch (error: any) {
+      console.error('Lỗi đăng nhập:', error)
+      setFailed('Đăng nhập thất bại. Vui lòng thử lại.')
+      setIsLoading(false)
+    }
   }
 
   return (
     <main className="mx-auto w-full max-w-md p-6">
       {failed && <Alert variant="destructive">{failed}</Alert>}
-      {loggedOut && (
-        <Alert variant="success">
-          <span className="font-bold">Goodbye!</span> Your session has been terminated.
-        </Alert>
-      )}
 
       <Card>
         <div className="p-4 sm:px-7 sm:py-8">
-          <div className="space-y-2">
-            <GoogleButton />
-            <GitHubButton />
-          </div>
+          <h2 className="text-center text-2xl font-bold mb-6">Đăng nhập</h2>
 
-          <HorizontalDivider label="Or" />
+          <div className="mt-6 grid gap-4">
+            <Button
+              type="button"
+              variant="primary"
+              isDisabled={isLoading}
+              onPress={handleLogin}
+            >
+              {isLoading ? 'Đang chuyển hướng...' : 'Đăng nhập với tài khoản'}
+            </Button>
 
-          <form autoComplete="off" onSubmit={handleSubmit(handleLogin)}>
-            <div className="grid gap-y-4">
-              <div>
-                <TextField
-                  label="Email address"
-                  // {...register('email', { required: true })}
-                  // error={errors.email}
-                />
-              </div>
-
-              <TextField
-                label="Password"
-                // disabled={isSubmitting}
-                // {...register('password', { required: true })}
-                // error={errors.password}
-                // withResetLink
-              />
-            </div>
-            <div className="mt-6 grid w-full">
-              <Button
-                type="submit"
-                variant="primary"
-                // disabled={isSubmitting}
-                // loading={isSubmitting}
-              >
-                Sign in
-              </Button>
-            </div>
-          </form>
-
-          <div className="mt-8 text-center">
-            <p className="text-gray-600 text-sm dark:text-gray-400">
-              <Link to="/" className="text-blue-600 decoration-2 hover:underline">
-                &larr; Go back to homepage
-              </Link>
-            </p>
+            <Button
+              type="button"
+              variant="secondary"
+              onPress={() => keycloak.register()}
+            >
+              Đăng ký tài khoản mới
+            </Button>
           </div>
         </div>
       </Card>

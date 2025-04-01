@@ -8,9 +8,15 @@ importers:
 
   .:
     dependencies:
+      '@react-keycloak/web':
+        specifier: ^3.4.0
+        version: 3.4.0(keycloak-js@26.1.4)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)
       gotrue-js:
         specifier: ^0.9.29
         version: 0.9.29
+      keycloak-js:
+        specifier: ^26.1.4
+        version: 26.1.4
       lucide-react:
         specifier: ^0.453.0
         version: 0.453.0(react@18.3.1)
@@ -945,6 +951,22 @@ packages:
     resolution: {integrity: sha512-WFgny1q2CbxxU6gu46TGQXf1DjsnuSk+RBDP4M7bm1mUVZzoCp7U7AtjNmsBrWg0NejxUdgD7+7jkHHCQ91qRA==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+
+  '@react-keycloak/core@3.2.0':
+    resolution: {integrity: sha512-1yzU7gQzs+6E1v6hGqxy0Q+kpMHg9sEcke2yxZR29WoU8KNE8E50xS6UbI8N7rWsgyYw8r9W1cUPCOF48MYjzw==}
+    peerDependencies:
+      react: '>=16'
+
+  '@react-keycloak/web@3.4.0':
+    resolution: {integrity: sha512-yKKSCyqBtn7dt+VckYOW1IM5NW999pPkxDZOXqJ6dfXPXstYhOQCkTZqh8l7UL14PkpsoaHDh7hSJH8whah01g==}
+    peerDependencies:
+      keycloak-js: '>=9.0.2'
+      react: '>=16.8'
+      react-dom: '>=16.8'
+      typescript: '>=3.8'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
 
   '@react-stately/calendar@3.5.5':
     resolution: {integrity: sha512-HzaiDRhrmaYIly8hRsjjIrydLkldiw1Ws6T/130NLQOt+VPwRW/x0R+nil42mA9LZ6oV0XN0NpmG5tn7TaKRGw==}
@@ -2302,6 +2324,9 @@ packages:
   hast-util-to-string@3.0.1:
     resolution: {integrity: sha512-XelQVTDWvqcl3axRfI0xSeoVKzyIFPwsAGSLIsKdJKQMXDYJS4WYrBNF/8J7RdhIcFI2BOHgAifggsvsxp/3+A==}
 
+  hoist-non-react-statics@3.3.2:
+    resolution: {integrity: sha512-/gGivxi8JPKWNm/W0jSmzcMPpfpPLc3dY/6GxhX2hQ9iGj3aDfklV4ET7NjKpSinLpJ5vafa9iiGIEZg10SfBw==}
+
   html-encoding-sniffer@4.0.0:
     resolution: {integrity: sha512-Y22oTqIU4uuPgEemfz7NDJz6OeKf12Lsu+QC+s3BVpda64lTiMYCyGwg5ki4vFxkMwQdeZDl2adZoqUgdFuTgQ==}
     engines: {node: '>=18'}
@@ -2483,6 +2508,9 @@ packages:
 
   jsonfile@6.1.0:
     resolution: {integrity: sha512-5dgndWOriYSm5cnYaJNhalLNDKOqFwyDB/rr1E9ZsGciGvKPs8R2xYGCacuf3z6K1YKDz182fd+fY3cn3pMqXQ==}
+
+  keycloak-js@26.1.4:
+    resolution: {integrity: sha512-4h2RicCzIAtsjKIG8DIO+8NKlpWX2fiNkbS0jlbtjZFbIGGjbQBzjS/5NkyWlzxamXVow9prHTIgIiwfo3GAmQ==}
 
   lefthook-darwin-arm64@1.7.22:
     resolution: {integrity: sha512-ObcNp1PLZcwlsMwfA50MxUEdY+mINY/H/e6357mzV0HbykX/B0Tko00G4ZY6KKKKdHLwg1rtZW/t+DPsAk4hdQ==}
@@ -2955,6 +2983,9 @@ packages:
     peerDependencies:
       react: ^0.14.8 || ^15.0.1 || ^16.0.0 || ^17.0.1 || ^18.0.0
       react-dom: ^0.14.8 || ^15.0.1 || ^16.0.0 || ^17.0.1 || ^18.0.0
+
+  react-fast-compare@3.2.2:
+    resolution: {integrity: sha512-nsO+KSNgo1SbJqJEYRE9ERzo7YtYbou/OqjSQKxV7jcKox7+usiUVZOAC+XnDOABXggQTno0Y1CpVnuWEc1boQ==}
 
   react-hook-form@7.53.1:
     resolution: {integrity: sha512-6aiQeBda4zjcuaugWvim9WsGqisoUk+etmFEsSUMm451/Ic8L/UAb7sRtMj3V+Hdzm6mMjU1VhiSzYUZeBm0Vg==}
@@ -4572,6 +4603,22 @@ snapshots:
       '@react-types/shared': 3.25.0(react@18.3.1)
       '@swc/helpers': 0.5.13
       react: 18.3.1
+
+  '@react-keycloak/core@3.2.0(react@18.3.1)':
+    dependencies:
+      react: 18.3.1
+      react-fast-compare: 3.2.2
+
+  '@react-keycloak/web@3.4.0(keycloak-js@26.1.4)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)':
+    dependencies:
+      '@babel/runtime': 7.25.7
+      '@react-keycloak/core': 3.2.0(react@18.3.1)
+      hoist-non-react-statics: 3.3.2
+      keycloak-js: 26.1.4
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+    optionalDependencies:
+      typescript: 5.6.3
 
   '@react-stately/calendar@3.5.5(react@18.3.1)':
     dependencies:
@@ -6207,6 +6254,10 @@ snapshots:
     dependencies:
       '@types/hast': 3.0.4
 
+  hoist-non-react-statics@3.3.2:
+    dependencies:
+      react-is: 16.13.1
+
   html-encoding-sniffer@4.0.0:
     dependencies:
       whatwg-encoding: 3.1.1
@@ -6400,6 +6451,8 @@ snapshots:
       universalify: 2.0.1
     optionalDependencies:
       graceful-fs: 4.2.11
+
+  keycloak-js@26.1.4: {}
 
   lefthook-darwin-arm64@1.7.22:
     optional: true
@@ -6870,6 +6923,8 @@ snapshots:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       react-is: 18.1.0
+
+  react-fast-compare@3.2.2: {}
 
   react-hook-form@7.53.1(react@18.3.1):
     dependencies:

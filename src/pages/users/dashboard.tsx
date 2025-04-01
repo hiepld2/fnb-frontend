@@ -3,14 +3,14 @@ import { Button, Card, Container } from '#/components/ui-react-aria'
 import { useAuthentication } from '#/context/auth/AuthProvider'
 
 export default function UserDashboard() {
-  const { user, logout } = useAuthentication()
+  const { userInfo, logout } = useAuthentication()
 
   return (
     <Container>
       <Card className="p-8">
         <p className="mb-2 font-semibold text-blue-600 text-sm">User Dashboard</p>
         <h1 className="block font-bold text-2xl text-gray-800 sm:text-2xl dark:text-white">
-          Welcome back, {user?.email}
+          Welcome back, {userInfo?.fullName}
         </h1>
         <p className="mt-2 text-gray-700 text-lg dark:text-gray-400">
           This should be a dashboard page for general user.

@@ -6,9 +6,11 @@ import { useAuthentication } from '#/context/auth/AuthProvider'
 // Assets in public directory cannot be imported from JavaScript.
 // Instead, we use `src/assets` directory.
 import ViteLogo from '../assets/images/vite.svg'
+import { useKeycloak } from '@react-keycloak/web'
 
 export default function Home() {
-  const { user, loggedIn } = useAuthentication()
+  const { userInfo } = useAuthentication()
+  const { keycloak } = useKeycloak()
 
   return (
     <div className="mx-auto flex h-full min-h-screen w-full flex-col">
@@ -26,7 +28,7 @@ export default function Home() {
           </p>
         </div>
         <div className="mt-4 flex flex-col items-center justify-center gap-2 sm:flex-row sm:gap-3">
-          <Link to="/dashboard" className="inline-flex items-center justify-center">
+          <Link to="/dashboard/overview" className="inline-flex items-center justify-center">
             <Button variant="primary">User Dashboard</Button>
           </Link>
           <Link to="/admin" className="inline-flex items-center justify-center">
@@ -43,8 +45,8 @@ export default function Home() {
           </Link>
         </div>
         <div>
-          <Alert variant={loggedIn ? 'info' : 'warning'} className="w-full text-center">
-            {loggedIn ? `Welcome back ${user?.email} 👋` : 'You are not logged in!'}
+          <Alert variant={keycloak.authenticated ? 'info' : 'warning'} className="w-full text-center">
+            {keycloak.authenticated ? `Welcome back ${userInfo?.fullName} 👋` : 'You are not logged in!'}
           </Alert>
         </div>
       </div>

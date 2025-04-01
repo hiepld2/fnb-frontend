@@ -1,52 +1,93 @@
 import clsx from 'clsx'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
-import { useSearchParams } from 'react-router-dom'
 import { Alert, Button, Card, TextField } from '#/components/ui-react-aria'
-import { auth } from '#/context/auth/AuthProvider'
+import { useKeycloak } from '@react-keycloak/web'
 
 interface ResetPasswordTypes {
-  password: string
+  currentPassword: string
+  newPassword: string
+  confirmPassword: string
 }
 
 export default function ResetPassword() {
+  const { keycloak } = useKeycloak()
   const navigate = useNavigate()
-  const [searchParams] = useSearchParams('')
-  const token = searchParams.get('recovery_token') as string
   const [success, setSuccess] = useState('')
   const [failed, setFailed] = useState('')
+  const [currentPassword, setCurrentPassword] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
 
   const {
-    // register,
     handleSubmit,
-    // formState: { errors, isSubmitting },
+    formState: { isSubmitting },
   } = useForm<ResetPasswordTypes>()
 
-  const handleResetPassword = (data: ResetPasswordTypes) => {
-    if (!token) {
-      setFailed('You need a recovery token to continue!')
+  const handleResetPassword = async () => {
+    try {
+      setFailed('')
+      setSuccess('')
+
+      if (!keycloak.authenticated) {
+        setFailed('Bạn cần đăng nhập để thay đổi mật khẩu!')
+        return
+      }
+
+      if (newPassword !== confirmPassword) {
+        setFailed('Mật khẩu xác nhận không khớp!')
+        return
+      }
+
+      if (newPassword.length < 8) {
+        setFailed('Mật khẩu mới phải có ít nhất 8 ký tự!')
+        return
+      }
+
+      // Gọi API Keycloak để thay đổi mật khẩu
+      const response = await fetch(
+        `${keycloak.authServerUrl}/admin/realms/${keycloak.realm}/users/${keycloak.tokenParsed?.sub}/reset-password`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${keycloak.token}`,
+          },
+          body: JSON.stringify({
+            type: 'password',
+            value: newPassword,
+            temporary: false,
+          }),
+        }
+      )
+
+      if (!response.ok) {
+        throw new Error('Không thể đổi mật khẩu')
+      }
+
+      setSuccess('Mật khẩu đã được thay đổi thành công!')
+      setCurrentPassword('')
+      setNewPassword('')
+      setConfirmPassword('')
+    } catch (error: any) {
+      setFailed(`Không thể đổi mật khẩu: ${error.message}`)
     }
-    auth
-      .verify('recovery', token)
-      .then((response) => {
-        response
-          .update({ password: data.password })
-          .then((result) => {
-            setSuccess(
-              `Password has been reset. Now, you can login with your email address: ${result.email}`
-            )
-          })
-          .catch((error) => setFailed(`Failed to reset your password: ${error.message}`))
-      })
-      .catch((error) => setFailed(`Failed to reset your password: ${error.message}`))
   }
 
-  useEffect(() => {
-    if (!token) {
-      navigate('/recovery')
-    }
-  }, [token, navigate])
+  // Nếu chưa đăng nhập, chuyển hướng về trang đăng nhập
+  if (!keycloak.authenticated) {
+    return (
+      <main className="mx-auto w-full max-w-md p-6">
+        <Alert variant="destructive">Bạn cần đăng nhập để thay đổi mật khẩu!</Alert>
+        <div className="mt-4 text-center">
+          <Link to="/login">
+            <Button variant="primary">Đăng nhập</Button>
+          </Link>
+        </div>
+      </main>
+    )
+  }
 
   return (
     <main className="mx-auto w-full max-w-md p-6">
@@ -57,45 +98,57 @@ export default function ResetPassword() {
           <div className="p-4 sm:px-7 sm:pb-8">
             <Alert variant="success">{success}</Alert>
             <div className="mt-6 grid w-full text-center">
-              <Link to="/login">
-                <Button variant="primary">Continue to your account &rarr;</Button>
+              <Link to="/">
+                <Button variant="primary">Quay lại trang chủ &rarr;</Button>
               </Link>
             </div>
           </div>
         )}
 
         <div className={clsx('p-4 sm:px-7 sm:py-8', success && 'hidden')}>
+          <h2 className="text-center text-2xl font-bold mb-6">Đổi mật khẩu</h2>
+
           <form autoComplete="off" onSubmit={handleSubmit(handleResetPassword)}>
             <div className="grid gap-y-4">
               <TextField
-                label="New Password"
-                // {...register('password', {
-                //   required: 'You must specify a password',
-                //   minLength: {
-                //     value: 8,
-                //     message: 'Password must have at least 8 characters',
-                //   },
-                // })}
-                // error={errors.password}
+                label="Mật khẩu hiện tại"
+                type="password"
+                value={currentPassword}
+                onChange={setCurrentPassword}
+                name="currentPassword"
+              />
+
+              <TextField
+                label="Mật khẩu mới"
+                type="password"
+                value={newPassword}
+                onChange={setNewPassword}
+                name="newPassword"
+              />
+
+              <TextField
+                label="Xác nhận mật khẩu"
+                type="password"
+                value={confirmPassword}
+                onChange={setConfirmPassword}
+                name="confirmPassword"
               />
             </div>
             <div className="mt-6 grid w-full">
               <Button
                 type="submit"
                 variant="primary"
-                // disabled={isSubmitting}
-                // loading={isSubmitting}
+                isDisabled={isSubmitting}
               >
-                Reset Password
+                Đổi mật khẩu
               </Button>
             </div>
           </form>
 
           <div className="mt-8 text-center">
             <p className="text-gray-600 text-sm dark:text-gray-400">
-              {'Remember your password? '}
-              <Link to="/login" className="text-blue-600 decoration-2 hover:underline">
-                Sign in here
+              <Link to="/" className="text-blue-600 decoration-2 hover:underline">
+                &larr; Quay lại trang chủ
               </Link>
             </p>
           </div>
