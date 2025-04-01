@@ -38,5 +38,5 @@ dist-ssr
 /tests-results
 
 # envars
-.env.*
-!.env.example
+.env
+!.env
