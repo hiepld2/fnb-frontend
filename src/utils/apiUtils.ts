@@ -1,4 +1,4 @@
-import { useAuthentication } from '../context/auth/AuthProvider'
+import { useAuthentication } from '#/context/auth/AuthProvider'
 import { useKeycloak } from '@react-keycloak/web'
 
 interface FetchOptions extends RequestInit {

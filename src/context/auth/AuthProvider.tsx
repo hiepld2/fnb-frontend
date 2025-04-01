@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react'
 import { useKeycloak } from '@react-keycloak/web'
-import { useApi } from '../../utils/api'
+import { useApi } from '#/utils/apiUtils'
 
 type UserInfo = {
   id: string
