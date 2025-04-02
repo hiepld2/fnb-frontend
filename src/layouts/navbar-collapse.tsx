@@ -2,24 +2,71 @@ import { useAuthentication } from '../context/auth/AuthProvider'
 import { useSitemap } from '../utils/hooks/auth-hooks'
 import { Link } from 'react-router-dom'
 import type { MenuItem } from '../utils/apis/auth-api'
+import { useState } from 'react'
 
 interface NavBarCollapseProps {
   onToggle?: () => void
 }
 
-// Component để render một menu item thu gọn
 const CollapsedMenuItem = ({ item }: { item: MenuItem }) => {
-  // Chỉ hiển thị các menu cấp 1 trong chế độ thu gọn
+  const [isOpen, setIsOpen] = useState(false)
+  const hasChildren = item.items && item.items.length > 0
+
+  const toggleSubMenu = () => {
+    if (hasChildren) {
+      setIsOpen(!isOpen)
+    }
+  }
+
   return (
-    <Link
-      to={item.to || '#'}
-      className="mt-2 flex h-12 w-12 items-center justify-center rounded hover:bg-gray-300 dark:hover:bg-gray-700 dark:hover:text-gray-300"
-      title={item.label}
-    >
-      <div className="flex h-6 w-6 items-center justify-center rounded-md bg-gray-200 dark:bg-gray-700">
-        <span className="text-xs font-medium">{item.label.charAt(0)}</span>
-      </div>
-    </Link>
+    <div className="w-full">
+      {item.to ? (
+        <Link
+          to={item.to || '#'}
+          className="mt-2 flex h-12 w-12 items-center justify-center rounded hover:bg-gray-300 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+          title={item.label}
+        >
+          <div className="flex h-6 w-6 items-center justify-center rounded-md bg-gray-200 dark:bg-gray-700">
+            <span className="text-xs font-medium">{item.label.charAt(0)}</span>
+          </div>
+        </Link>
+      ) : (
+        // Menu item là nhóm (có children)
+        <div className="w-full">
+          <button
+            type="button"
+            onClick={toggleSubMenu}
+            className="mt-2 flex h-12 w-full items-center rounded px-3 text-left hover:bg-gray-200 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+          >
+            <span className="font-medium text-xs">{item.label.charAt(0)}</span>
+            {hasChildren && (
+              <svg
+                className={`ml-auto h-5 w-5 transform ${isOpen ? 'rotate-180' : ''}`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            )}
+          </button>
+
+          {/* Submenu */}
+          {isOpen && hasChildren && (
+            <div className='ml-4 border-gray-300 border-l dark:border-gray-700'>
+              {item.items.map((subItem) => (
+                <CollapsedMenuItem key={subItem.id} item={subItem} />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
   )
 }
 
@@ -54,7 +101,12 @@ export function NavBarCollapse({ onToggle }: NavBarCollapseProps) {
           viewBox="0 0 24 24"
           stroke="currentColor"
         >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M13 5l7 7-7 7M5 5l7 7-7 7"
+          />
         </svg>
       </button>
 

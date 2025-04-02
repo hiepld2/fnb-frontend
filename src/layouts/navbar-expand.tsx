@@ -69,7 +69,7 @@ export function NavBarExpand({ onToggle }: NavBarExpandProps) {
   const { data: menuData, isLoading, error } = useSitemap()
 
   return (
-    <div className="flex h-full min-h-screen w-56 flex-col items-center overflow-hidden rounded-r bg-white text-gray-600 shadow-sm dark:border-gray-800 dark:border-r dark:bg-gray-900 dark:text-gray-400">
+    <div className="flex h-full min-h-screen w-56 flex-col items-center overflow-hidden rounded-r bg-white text-gray-600 shadow-md dark:border-gray-900 dark:border-r dark:bg-gray-900 dark:text-gray-400">
       <div className="mt-3 flex w-full items-center justify-between px-3">
         <div className="flex items-center">
           <svg
