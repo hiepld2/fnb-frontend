@@ -16,7 +16,7 @@ import './assets/styles/tailwind.css'
 const keycloakClient = new Keycloak({
   url: 'http://10.14.185.16:5080',
   realm: 'restaurant-realm',
-  clientId: 'restaurant-app',
+  clientId: 'restaurant-customer',
 })
 
 const rootElement = document.getElementById('root')
